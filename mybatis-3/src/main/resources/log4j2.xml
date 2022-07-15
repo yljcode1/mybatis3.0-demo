@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--status：设置log4j2自身内部的信息输出，可不设置，设置成trace时，会打印log4j2内部各种详细输出-->
+<!--        高->低：OFF、FATAL、ERROR、WARN、INFO、DEBUG、TRACE、ALL -->
+<!--monitorInterval：设置间隔秒数，最小为5s（不用写单位）。Log4j2能自动检测配置文件是否修改，若修改则重新配置，此项-->
+<Configuration status="error">
+    <!--先定义所有的appender -->
+    <Appenders>
+        <!-- 输出到控制台的配置 -->
+        <!-- target：SYSTEM_OUT 或 SYSTEM_ERR，默认是SYSTEM_OUT -->
+        <Console name="Console" target="SYSTEM_OUT">
+            <!-- 控制台只输出level及以上级别的信息（onMatch），其他的直接拒绝（onMismatch） -->
+            <ThresholdFilter level="trace" onMatch="ACCEPT" onMismatch="DENY"/>
+            <!-- 输出日志的格式 -->
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} %-5level %class{36} %L %M - %msg%xEx%n"/>
+        </Console>
+
+        <!--此文件会打印出所有信息 -->
+        <!--append：TRUE表示消息增加到指定文件中，false表示消息覆盖指定的文件，默认值是true -->
+        <File name="log" fileName="D:/logs/log4j2.log" append="false">
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} %-5level %class{36} %L %M - %msg%xEx%n"/>
+        </File>
+
+        <!--ThresholdFilter：过滤器,可输出某个级别以及以上的类别  -->
+        <!--                onMatch="ACCEPT" onMismatch="DENY"意思是匹配就接受,否则直接拒绝 -->
+        <File name="ERROR" fileName="D:/logs/error.log">
+            <ThresholdFilter level="error" onMatch="ACCEPT" onMismatch="DENY"/>
+            <PatternLayout pattern="%d{yyyy.MM.dd 'at' HH:mm:ss z} %-5level %class{36} %L %M - %msg%xEx%n"/>
+        </File>
+
+
+        <!--打印出所有的信息，每次大小超过size，则这size大小的日志会自动存入文件并进行压缩，作为存档 -->
+        <RollingFile name="RollingFile" fileName="D:/logs/web.log"
+                     filePattern="logs/$${date:yyyy-MM}/web-%d{MM-dd-yyyy}-%i.log.gz">
+            <PatternLayout pattern="%d{yyyy-MM-dd 'at' HH:mm:ss z} %-5level %class{36} %L %M - %msg%xEx%n"/>
+            <SizeBasedTriggeringPolicy size="2MB"/>
+        </RollingFile>
+    </Appenders>
+
+    <!--然后定义logger，只有定义了logger并引入刚才的的appender配置，appender才会生效 -->
+    <!--   若logger标签定义了level，则会覆盖root标签的level，否则使用root标签的level。见下边的 “指定特定类的输出” -->
+    <Loggers>
+        <Root level="trace">
+            <Appender-ref ref="RollingFile"/>
+            <Appender-ref ref="Console"/>
+            <Appender-ref ref="ERROR" />
+            <Appender-ref ref="log"/>
+        </Root>
+    </Loggers>
+</Configuration>
