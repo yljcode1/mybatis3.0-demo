@@ -20,7 +20,7 @@ import java.util.List;
 @Slf4j
 public class MyTest {
     public static void main(String[] args) throws IOException {
-        String resource = "com/xxx/mybatis-config.xml";
+        String resource = "mybatis-config.xml";
         InputStream inputStream = Resources.getResourceAsStream(resource);
         // 加载mybatis-config.xml配置文件，并且创建SqlSessionFactory对象
         SqlSessionFactory build = new SqlSessionFactoryBuilder().build(inputStream);
